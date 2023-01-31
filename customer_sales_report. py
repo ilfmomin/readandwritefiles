@@ -1,0 +1,39 @@
+import csv 
+
+original_file = "sales.csv"
+new_file = 'salesreport.csv'
+
+infile = open(original_file, "r")
+outfile = open(new_file, "w")
+
+reader = csv.reader(infile)
+writer = csv.writer(outfile, delimiter=',')
+
+fieldnames = next(reader)
+fieldnames[1] = "Total"
+newfields = (fieldnames[0], fieldnames[1])
+writer.writerow(newfields)
+
+count = 0 
+last_customer = ""
+total = 0 
+
+for row in reader:
+    customer_id = row[0]
+    subtotal =float(row[3])
+    tax = float(row[4])
+    freight = float(row[5])
+    if count == 0:
+        last_customer = customer_id
+    if customer_id == last_customer:
+        total += subtotal + tax + freight
+    else:
+        writer.writerow((last_customer, format (total, '.2f')))
+        total = subtotal + tax + freight
+    last_customer= customer_id
+    count += 1
+    writer.writerow((last_customer, format (total, '.2f')))
+
+    infile.close()
+    outfile.close()
+
